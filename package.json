@@ -1,0 +1,20 @@
+{
+  "name": "tsg-live-tetris",
+  "version": "1.0.0",
+  "description": "TSG LIVE! 当日ライブコーディング用リポジトリ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hakatashi/tsg-live-tetris.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hakatashi/tsg-live-tetris/issues"
+  },
+  "homepage": "https://github.com/hakatashi/tsg-live-tetris#readme"
+}
