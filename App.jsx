@@ -2,6 +2,7 @@ const React = require('react');
 const decomp = require('poly-decomp');
 window.decomp = decomp;
 const Matter = require('matter-js');
+const sample = require('lodash/sample');
 
 const data = require('./data.json');
 
@@ -23,12 +24,6 @@ module.exports = class App extends React.Component {
 			},
 		});
 		this.engine = Matter.Engine.create({world: this.world});
-		const box = Matter.Bodies.fromVertices(40, 0, data.parts[0], {
-			label: 'box',
-		});
-		const box2 = Matter.Bodies.fromVertices(50, 30, data.parts[1], {
-			label: 'box2',
-		});
 		const ground = Matter.Bodies.rectangle(50, 250, 300, 100, {
 			isStatic: true,
 			label: 'wall',
@@ -41,7 +36,25 @@ module.exports = class App extends React.Component {
 			isStatic: true,
 			label: 'wall',
 		});
-		Matter.World.add(this.engine.world, [box, box2, ground, wall1, wall2]);
+		Matter.World.add(this.engine.world, [
+			...Array(15)
+				.fill()
+				.map(() => {
+					const mino = sample(data.minos);
+					return Matter.Bodies.fromVertices(
+						Math.random() * 100,
+						Math.random() * 200,
+						mino.vertices,
+						{
+							label: 'box',
+							mino,
+						}
+					);
+				}),
+			ground,
+			wall1,
+			wall2,
+		]);
 		Matter.Engine.run(this.engine);
 
 		setInterval(this.handleTick, 16);
@@ -50,7 +63,6 @@ module.exports = class App extends React.Component {
 	handleTick = () => {
 		const bodies = Matter.Composite.allBodies(this.engine.world);
 		const box = bodies.find(({label}) => label === 'box');
-		console.log(Object.keys(box));
 		this.setState({
 			bodies: bodies.filter(({label}) => label !== 'wall'),
 		});
@@ -75,7 +87,7 @@ module.exports = class App extends React.Component {
 						).map((part, partIndex) => (
 							<path
 								key={partIndex}
-								fill="red"
+								fill={part.mino.color}
 								d={`M ${part.vertices
 									.map(({x, y}) => `${x} ${y}`)
 									.join(' L ')} Z`}
