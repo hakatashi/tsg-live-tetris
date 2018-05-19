@@ -15,7 +15,7 @@ module.exports = class App extends React.Component {
 			blocks: [],
 			frames: 0,
 			bodies: [],
-			tempBlock: 'T',
+			tempBlock: 'L',
 			flyingBlock: null,
 		};
 	}
@@ -26,6 +26,10 @@ module.exports = class App extends React.Component {
 		const velocity = Math.sqrt(mino.velocity.x ** 2 + mino.velocity.y ** 2);
 
 		if (velocity < 0.00001) {
+			if (this.state.flyingBlock === null) {
+				return;
+			}
+
 			const {
 				angle,
 				position: {x, y},
@@ -33,13 +37,32 @@ module.exports = class App extends React.Component {
 
 			const fixedX = Math.floor(x / 10);
 			const fixedY = Math.floor(y / 10);
-			const fixedAngle = Math.floor(angle / (Math.PI / 2));
+			const fixedAngle =
+				(Math.floor(angle / (Math.PI / 2) + 0.5) + 4) % 4;
+			console.log(fixedAngle);
 
-			const shiftedBlocks = data.minos[this.state.flyingBlock].blocks.map(
-				(block) => ({x: block.x + fixedX, y: block.y + fixedY})
+			const rotatedBlocks = data.minos[this.state.flyingBlock].blocks.map(
+				({x, y}) => {
+					if (fixedAngle === 0) {
+						return {x, y};
+					} else if (fixedAngle === 1) {
+						return {x: -y, y: x};
+					} else if (fixedAngle === 2) {
+						return {x: -x, y: -y};
+					} else if (fixedAngle === 3) {
+						return {x: y + 1, y: -x - 1};
+					}
+				}
 			);
 
+			const shiftedBlocks = rotatedBlocks.map((block) => ({
+				x: block.x + fixedX,
+				y: block.y + fixedY,
+			}));
+
 			this.setState(({blocks}) => ({
+				flyingBlock: null,
+				bodies: [],
 				blocks: blocks.concat(shiftedBlocks),
 			}));
 		} else {
