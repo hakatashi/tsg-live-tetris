@@ -60,6 +60,7 @@ module.exports = class App extends React.Component {
 			}));
 
 			this.setState(({blocks}) => ({
+				tempBlock: sample(Object.keys(data.minos)),
 				flyingBlock: null,
 				bodies: [],
 				blocks: blocks.concat(shiftedBlocks),
