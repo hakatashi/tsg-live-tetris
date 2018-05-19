@@ -2,6 +2,7 @@ const React = require('react');
 const decomp = require('poly-decomp');
 window.decomp = decomp;
 const Matter = require('matter-js');
+const sample = require('lodash/sample');
 
 const data = require('./data.json');
 
@@ -20,8 +21,11 @@ module.exports = class App extends React.Component {
 			gravity: {x: 0, y: 0.1},
 		});
 		this.engine = Matter.Engine.create({world: this.world});
+		const mino = sample(data.minos);
 		Matter.World.add(this.engine.world, [
-			Matter.Bodies.fromVertices(50, 50, data.minos.S.vertices),
+			Matter.Bodies.fromVertices(50, 50, mino.vertices, {
+				mino,
+			}),
 			Matter.Bodies.rectangle(50, 210, 200, 20, {
 				isStatic: true,
 				label: 'wall',
@@ -72,7 +76,7 @@ module.exports = class App extends React.Component {
 									d={`M ${part.vertices
 										.map(({x, y}) => `${x} ${y}`)
 										.join(' L ')} Z`}
-									fill="red"
+									fill={part.mino.color}
 								/>
 							))}
 						</g>
