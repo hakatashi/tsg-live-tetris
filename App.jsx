@@ -15,11 +15,14 @@ module.exports = class App extends React.Component {
 			blocks: [],
 			frames: 0,
 			bodies: [],
+			tempBlock: 'T',
 		};
 
+		/*
 		this.world = Matter.World.create({
 			gravity: {x: 0, y: 0.1},
 		});
+
 		this.engine = Matter.Engine.create({world: this.world});
 		const mino = Matter.Bodies.fromVertices(
 			50,
@@ -49,6 +52,7 @@ module.exports = class App extends React.Component {
 		Matter.Engine.run(this.engine);
 
 		setInterval(this.handleTick, 33);
+		*/
 	}
 
 	handleTick = () => {
@@ -69,6 +73,15 @@ module.exports = class App extends React.Component {
 					fill="none"
 					stroke="grey"
 				/>
+				{this.state.tempBlock && (
+					<path
+						d={`M ${data.minos[this.state.tempBlock].vertices
+							.map(({x, y}) => `${x} ${y}`)
+							.join(' L ')} Z`}
+						fill={data.minos[this.state.tempBlock].color}
+						transform="translate(50, 10)"
+					/>
+				)}
 				{this.state.bodies
 					.filter(({label}) => label !== 'wall')
 					.map((body, index) => (
