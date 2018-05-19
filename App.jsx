@@ -17,8 +17,16 @@ module.exports = class App extends React.Component {
 			bodies: [],
 			tempBlock: 'T',
 		};
+	}
 
-		/*
+	handleTick = () => {
+		const bodies = Matter.Composite.allBodies(this.engine.world);
+		this.setState({
+			bodies,
+		});
+	};
+
+	handleClick = () => {
 		this.world = Matter.World.create({
 			gravity: {x: 0, y: 0.1},
 		});
@@ -26,13 +34,13 @@ module.exports = class App extends React.Component {
 		this.engine = Matter.Engine.create({world: this.world});
 		const mino = Matter.Bodies.fromVertices(
 			50,
-			100,
-			data.minos.T.vertices,
+			10,
+			data.minos[this.state.tempBlock].vertices,
 			{
-				mino: data.minos.T,
+				mino: data.minos[this.state.tempBlock],
 			}
 		);
-		Matter.Body.setVelocity(mino, {x: 3, y: -3});
+		Matter.Body.setVelocity(mino, {x: 1, y: 1});
 		Matter.World.add(this.engine.world, [
 			mino,
 			Matter.Bodies.rectangle(50, 210, 200, 20, {
@@ -51,15 +59,11 @@ module.exports = class App extends React.Component {
 
 		Matter.Engine.run(this.engine);
 
-		setInterval(this.handleTick, 33);
-		*/
-	}
-
-	handleTick = () => {
-		const bodies = Matter.Composite.allBodies(this.engine.world);
 		this.setState({
-			bodies,
+			tempBlock: null,
 		});
+
+		setInterval(this.handleTick, 33);
 	};
 
 	render() {
@@ -80,6 +84,7 @@ module.exports = class App extends React.Component {
 							.join(' L ')} Z`}
 						fill={data.minos[this.state.tempBlock].color}
 						transform="translate(50, 10)"
+						onClick={this.handleClick}
 					/>
 				)}
 				{this.state.bodies
