@@ -38,7 +38,7 @@ module.exports = class App extends React.Component {
 			const fixedX = Math.floor(x / 10 + 0.5);
 			const fixedY = Math.floor(y / 10 + 0.5);
 			const fixedAngle =
-				(Math.floor(angle / (Math.PI / 2) + 0.5) + 4) % 4;
+				(Math.floor(angle / (Math.PI / 2) + 0.5) + 4000000000) % 4;
 
 			const rotatedBlocks = data.minos[this.state.flyingBlock].blocks.map(
 				({x, y}) => {
