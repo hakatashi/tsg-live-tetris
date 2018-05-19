@@ -1,4 +1,6 @@
 const React = require('react');
+const decomp = require('poly-decomp');
+window.decomp = decomp;
 const Matter = require('matter-js');
 
 const data = require('./data.json');
@@ -19,7 +21,7 @@ module.exports = class App extends React.Component {
 		});
 		this.engine = Matter.Engine.create({world: this.world});
 		Matter.World.add(this.engine.world, [
-			Matter.Bodies.rectangle(50, 50, 10, 10),
+			Matter.Bodies.fromVertices(50, 50, data.minos.S.vertices),
 			Matter.Bodies.rectangle(50, 210, 200, 20, {
 				isStatic: true,
 				label: 'wall',
@@ -59,13 +61,21 @@ module.exports = class App extends React.Component {
 				/>
 				{this.state.bodies
 					.filter(({label}) => label !== 'wall')
-					.map((body) => (
-						<path
-							d={`M ${body.vertices
-								.map(({x, y}) => `${x} ${y}`)
-								.join(' L ')} Z`}
-							fill="red"
-						/>
+					.map((body, index) => (
+						<g key={index}>
+							{(body.parts.length === 1
+								? body.parts
+								: body.parts.slice(1)
+							).map((part, partIndex) => (
+								<path
+									key={partIndex}
+									d={`M ${part.vertices
+										.map(({x, y}) => `${x} ${y}`)
+										.join(' L ')} Z`}
+									fill="red"
+								/>
+							))}
+						</g>
 					))}
 			</svg>
 		);
