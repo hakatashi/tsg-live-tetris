@@ -21,11 +21,20 @@ module.exports = class App extends React.Component {
 			gravity: {x: 0, y: 0.1},
 		});
 		this.engine = Matter.Engine.create({world: this.world});
-		const mino = sample(data.minos);
 		Matter.World.add(this.engine.world, [
-			Matter.Bodies.fromVertices(50, 50, mino.vertices, {
-				mino,
-			}),
+			...Array(20)
+				.fill()
+				.map(() => {
+					const mino = sample(data.minos);
+					return Matter.Bodies.fromVertices(
+						Math.random() * 100,
+						Math.random() * 200,
+						mino.vertices,
+						{
+							mino,
+						}
+					);
+				}),
 			Matter.Bodies.rectangle(50, 210, 200, 20, {
 				isStatic: true,
 				label: 'wall',
