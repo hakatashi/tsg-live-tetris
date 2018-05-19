@@ -85,6 +85,9 @@ module.exports = class App extends React.Component {
 						fill={data.minos[this.state.tempBlock].color}
 						transform="translate(50, 10)"
 						onClick={this.handleClick}
+						style={{
+							cursor: 'pointer',
+						}}
 					/>
 				)}
 				{this.state.bodies
