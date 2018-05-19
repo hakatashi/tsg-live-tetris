@@ -1,4 +1,5 @@
 const React = require('react');
+const Matter = require('matter-js');
 
 const data = require('./data.json');
 
@@ -9,44 +10,42 @@ module.exports = class App extends React.Component {
 		super(props);
 		this.state = {
 			blocks: [],
-			blockX: 50,
-			blockY: 30,
-			blockType: 'Z',
+			frames: 0,
+			bodies: [],
 		};
+
+		this.world = Matter.World.create({
+			gravity: {x: 0, y: 0.1},
+		});
+		this.engine = Matter.Engine.create({world: this.world});
+		Matter.World.add(this.engine.world, [
+			Matter.Bodies.rectangle(50, 50, 10, 10),
+			Matter.Bodies.rectangle(50, 210, 200, 20, {isStatic: true}),
+		]);
+
+		Matter.Engine.run(this.engine);
 
 		setInterval(this.handleTick, 33);
 	}
 
 	handleTick = () => {
-		this.setState(({blockY}) => ({
-			blockY: blockY + 1,
-		}));
+		const bodies = Matter.Composite.allBodies(this.engine.world);
+		this.setState({
+			bodies,
+		});
 	};
 
 	render() {
 		return (
 			<svg width="100%" height="100%" viewBox="0 0 100 200">
-				{this.state.blocks.map((block, index) => (
-					<rect
-						key={index}
-						x={block.x * 10}
-						y={block.y * 10}
-						width="10"
-						height="10"
-						fill={['red', 'blue', 'yellow'][block.type]}
-					/>
-				))}
-				{this.state.blockType && (
+				{this.state.bodies.map((body) => (
 					<path
-						d={`M ${data.minos[this.state.blockType].vertices
+						d={`M ${body.vertices
 							.map(({x, y}) => `${x} ${y}`)
 							.join(' L ')} Z`}
-						fill={data.minos[this.state.blockType].color}
-						transform={`translate(${this.state.blockX}, ${
-							this.state.blockY
-						})`}
+						fill="red"
 					/>
-				)}
+				))}
 			</svg>
 		);
 	}
