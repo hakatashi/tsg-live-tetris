@@ -13,7 +13,15 @@ module.exports = class App extends React.Component {
 			blockY: 30,
 			blockType: 'Z',
 		};
+
+		setInterval(this.handleTick, 33);
 	}
+
+	handleTick = () => {
+		this.setState(({blockY}) => ({
+			blockY: blockY + 1,
+		}));
+	};
 
 	render() {
 		return (
