@@ -102,6 +102,10 @@ module.exports = class App extends React.Component {
 				isStatic: true,
 				label: 'wall',
 			}),
+			...this.state.blocks.map(({x, y}) => Matter.Bodies.rectangle(x * 10 + 5, y * 10 + 5, 10, 10, {
+				isStatic: true,
+				label: 'wall',
+			})),
 		]);
 
 		Matter.Engine.run(this.engine);
