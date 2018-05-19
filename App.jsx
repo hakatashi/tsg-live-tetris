@@ -15,7 +15,7 @@ module.exports = class App extends React.Component {
 			blocks: [],
 			frames: 0,
 			bodies: [],
-			tempBlock: 'L',
+			tempBlock: sample(Object.keys(data.minos)),
 			flyingBlock: null,
 		};
 	}
@@ -35,11 +35,10 @@ module.exports = class App extends React.Component {
 				position: {x, y},
 			} = mino;
 
-			const fixedX = Math.floor(x / 10);
-			const fixedY = Math.floor(y / 10);
+			const fixedX = Math.floor(x / 10 + 0.5);
+			const fixedY = Math.floor(y / 10 + 0.5);
 			const fixedAngle =
 				(Math.floor(angle / (Math.PI / 2) + 0.5) + 4) % 4;
-			console.log(fixedAngle);
 
 			const rotatedBlocks = data.minos[this.state.flyingBlock].blocks.map(
 				({x, y}) => {
