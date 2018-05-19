@@ -16,14 +16,37 @@ module.exports = class App extends React.Component {
 			frames: 0,
 			bodies: [],
 			tempBlock: 'T',
+			flyingBlock: null,
 		};
 	}
 
 	handleTick = () => {
 		const bodies = Matter.Composite.allBodies(this.engine.world);
-		this.setState({
-			bodies,
-		});
+		const mino = bodies.find(({label}) => label === 'mino');
+		const velocity = Math.sqrt(mino.velocity.x ** 2 + mino.velocity.y ** 2);
+
+		if (velocity < 0.00001) {
+			const {
+				angle,
+				position: {x, y},
+			} = mino;
+
+			const fixedX = Math.floor(x / 10);
+			const fixedY = Math.floor(y / 10);
+			const fixedAngle = Math.floor(angle / (Math.PI / 2));
+
+			const shiftedBlocks = data.minos[this.state.flyingBlock].blocks.map(
+				(block) => ({x: block.x + fixedX, y: block.y + fixedY})
+			);
+
+			this.setState(({blocks}) => ({
+				blocks: blocks.concat(shiftedBlocks),
+			}));
+		} else {
+			this.setState({
+				bodies,
+			});
+		}
 	};
 
 	handleClick = () => {
@@ -37,6 +60,7 @@ module.exports = class App extends React.Component {
 			10,
 			data.minos[this.state.tempBlock].vertices,
 			{
+				label: 'mino',
 				mino: data.minos[this.state.tempBlock],
 			}
 		);
@@ -59,9 +83,10 @@ module.exports = class App extends React.Component {
 
 		Matter.Engine.run(this.engine);
 
-		this.setState({
+		this.setState(({tempBlock}) => ({
 			tempBlock: null,
-		});
+			flyingBlock: tempBlock,
+		}));
 
 		setInterval(this.handleTick, 33);
 	};
@@ -77,6 +102,16 @@ module.exports = class App extends React.Component {
 					fill="none"
 					stroke="grey"
 				/>
+				{this.state.blocks.map((block, index) => (
+					<rect
+						key={index}
+						x={block.x * 10}
+						y={block.y * 10}
+						width="10"
+						height="10"
+						fill="red"
+					/>
+				))}
 				{this.state.tempBlock && (
 					<path
 						d={`M ${data.minos[this.state.tempBlock].vertices
